@@ -1,0 +1,17 @@
+{
+  "name": "Ricerca codici DTC",
+  "short_name": "Codici DTC",
+  "description": "Ricerca dei codici di errore DTC per macchina",
+  "lang": "it",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#eef2f3",
+  "theme_color": "#2c3e50",
+  "icons": [
+    { "src": "icona-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icona-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icona-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "icona.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

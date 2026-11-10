@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ricerca Database codici DTC</title>
+    <!-- Icona e collegamento sulla Home del telefono -->
+    <link rel="icon" type="image/svg+xml" href="icona.svg" />
+    <link rel="icon" type="image/png" sizes="192x192" href="icona-192.png" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#2c3e50" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Codici DTC" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <style>
+      body {
+        font-family: "Segoe UI", sans-serif;
+        background-color: #eef2f3;
+        padding: 20px 10px;
+        display: flex;
+        justify-content: center;
+      }
+      .container {
+        background-color: #ffffff;
+        padding: 30px 20px;
+        border-radius: 12px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+        max-width: 500px;
+        width: 100%;
+        text-align: center;
+        box-sizing: border-box;
+      }
+      h2 {
+        color: #2c3e50;
+        margin-bottom: 25px;
+      }
+      .form-group {
+        margin-bottom: 20px;
+        text-align: left;
+        position: relative; /* Fondamentale per posizionare il menu a tendina */
+      }
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #34495e;
+      }
+      input[type="text"] {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #cccccc;
+        border-radius: 6px;
+        box-sizing: border-box;
+        font-size: 16px;
+      }
+
+      /* --- NUOVO MENU DI AUTOCOMPLETE PERSONALIZZATO PER MOBILE --- */
+      .autocomplete-suggestions {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: #ffffff;
+        border: 1px solid #cccccc;
+        border-top: none;
+        border-radius: 0 0 6px 6px;
+        max-height: 220px;
+        overflow-y: auto;
+        z-index: 9999;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        display: none;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+      }
+      .autocomplete-suggestion {
+        padding: 12px;
+        cursor: pointer;
+        text-align: left;
+        font-size: 15px;
+        border-bottom: 1px solid #f1f1f1;
+        color: #333;
+      }
+      .autocomplete-suggestion:hover,
+      .autocomplete-suggestion:active {
+        /* active ottimizza il tocco su mobile */
+        background-color: #e8f4fd;
+      }
+
+      button {
+        width: 100%;
+        background-color: #2ecc71;
+        color: white;
+        padding: 14px;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+        cursor: pointer;
+        font-weight: bold;
+        margin-top: 10px;
+      }
+      .result-box {
+        margin-top: 25px;
+        padding: 18px;
+        border-radius: 6px;
+        background-color: #f9fbfd;
+        border-left: 5px solid #3498db;
+        text-align: left;
+        display: none;
+      }
+      .result-title {
+        font-size: 11px;
+        color: #95a5a6;
+        text-transform: uppercase;
+        margin-bottom: 5px;
+      }
+      .result-value {
+        font-size: 18px;
+        font-weight: bold;
+        color: #2c3e50;
+        word-break: break-word; /* Evita che testi lunghi escano dal box su schermi piccoli */
+      }
+      select {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #cccccc;
+        border-radius: 6px;
+        box-sizing: border-box;
+        font-size: 16px;
+        background: #fff;
+      }
+      .result-value .result-row {
+        font-size: 16px;
+        padding: 8px 0;
+        border-bottom: 1px solid #e6ecf0;
+      }
+      .result-value .result-row:last-child {
+        border-bottom: none;
+      }
+      .badge {
+        display: inline-block;
+        background: #3498db;
+        color: #fff;
+        font-size: 12px;
+        padding: 2px 6px;
+        border-radius: 4px;
+        margin-right: 4px;
+        font-weight: bold;
+      }
+      .badge-1204 {
+        background: #e67e22;
+      }
+      .badge-388 {
+        background: #8e44ad;
+      }
+      /* Messaggio in italiano: stesso colore del resto del testo */
+      .msg-it {
+        color: inherit;
+      }
+      /* Messaggio originale (inglese/tedesco) sotto la traduzione */
+      .msg-originale {
+        margin-top: 4px;
+        font-weight: normal;
+        font-style: italic;
+        color: #7f8c8d;
+        font-size: 0.9em;
+      }
+      .logo {
+        width: 72px;
+        height: 72px;
+        display: block;
+        margin: 0 auto -10px;
+      }
+      .installa-btn {
+        background-color: #ffffff;
+        color: #2c3e50;
+        border: 2px solid #2c3e50;
+        margin-top: 25px;
+      }
+      .installa-istruzioni {
+        display: none;
+        margin-top: 12px;
+        padding: 12px;
+        border-radius: 6px;
+        background: #fef9e7;
+        text-align: left;
+        font-size: 15px;
+        color: #34495e;
+        line-height: 1.5;
+      }
+      .icona-stato {
+        font-size: 15px;
+        cursor: help;
+      }
+      .error {
+        border-left-color: #e74c3c;
+        background-color: #fff5f5;
+      }
+      .error .result-value {
+        color: #c0392b;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <img src="icona.svg" alt="" class="logo" />
+      <h2>Ricerca codici DTC</h2>
+
+      <div class="form-group">
+        <label for="machineSelect">Macchina:</label>
+        <select id="machineSelect">
+          <option value="tutte">Tutte</option>
+          <option value="12-02">12-02</option>
+          <option value="12-04">12-04</option>
+          <option value="388">388</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="searchKey">Inserisci codice DTC:</label>
+        <input
+          type="text"
+          id="searchKey"
+          placeholder="Codice DTC..."
+          autocomplete="off"
+          oninput="aggiornaFiltroAutocomplete()"
+        />
+        <!-- Lista dei suggerimenti personalizzata anziché datalist -->
+        <ul id="dtcSuggestions" class="autocomplete-suggestions"></ul>
+      </div>
+
+      <button onclick="cercaDati()">Cerca Codice</button>
+
+      <div id="resultContainer" class="result-box">
+        <div id="resultLabel" class="result-title">
+          Risultati:
+        </div>
+        <div id="resultValue" class="result-value"></div>
+      </div>
+
+      <!-- Aggiungi alla schermata Home (nascosto se la pagina è già aperta come app) -->
+      <button id="installaBtn" class="installa-btn" type="button" onclick="aggiungiAllaHome()">
+        📲 Aggiungi alla schermata Home
+      </button>
+      <div id="installaIstruzioni" class="installa-istruzioni"></div>
+    </div>
+
+    <!-- IMPORTA IL FILE DATI NELLA STESSA CARTELLA -->
+    <script src="databaseCSV.js"></script>
+
+    <script>
+      // Parser di una riga "macchina;stato;codice;ECU;messaggio" (gestisce i campi tra virgolette)
+      function parseRiga(riga) {
+        const campi = [];
+        let cur = "", inQuote = false;
+        for (let i = 0; i < riga.length; i++) {
+          const ch = riga[i];
+          if (inQuote) {
+            if (ch === '"' && riga[i + 1] === '"') { cur += '"'; i++; }
+            else if (ch === '"') inQuote = false;
+            else cur += ch;
+          } else if (ch === '"') inQuote = true;
+          else if (ch === ";") { campi.push(cur.trim()); cur = ""; }
+          else cur += ch;
+        }
+        campi.push(cur.trim());
+        return campi;
+      }
+
+      const database = databaseCSV
+        .split(/\r?\n/)
+        .filter((line) => line.trim() !== "")
+        .map(parseRiga)
+        .filter((c) => c.length >= 5 && c[2] !== "")
+        .map((c) => ({ macchina: c[0], stato: c[1], codice: c[2], ecu: c[3], messaggio: c[4], traduzione: c[5] || "", chiave: normalizza(c[2]) }));
+
+      // Messaggio in italiano (in verde): la traduzione se c'è, altrimenti il messaggio già in italiano
+      function messaggioItaliano(r) {
+        return '<span class="msg-it">' + escapeHtml(r.traduzione || r.messaggio) + "</span>";
+      }
+
+      // Messaggio originale (inglese/tedesco) sotto, in corsivo: solo per i messaggi tradotti
+      function messaggioOriginale(r) {
+        return r.traduzione ? '<div class="msg-originale">' + escapeHtml(r.messaggio) + "</div>" : "";
+      }
+
+      // Confronto senza maiuscole e senza spazi: "t101" trova "T 101"
+      function normalizza(t) {
+        return t.toLowerCase().replace(/\s+/g, "");
+      }
+
+      function righeFiltrate() {
+        const m = document.getElementById("machineSelect").value;
+        return m === "tutte" ? database : database.filter((r) => r.macchina === m);
+      }
+
+      function escapeHtml(t) {
+        const d = document.createElement("div");
+        d.innerText = t;
+        return d.innerHTML;
+      }
+
+      // Etichetta colorata con il nome della macchina
+      function badgeMacchina(m) {
+        const classe = m === "12-04" ? "badge badge-1204" : m === "388" ? "badge badge-388" : "badge";
+        return '<span class="' + classe + '">' + escapeHtml(m) + "</span>";
+      }
+
+      // Icona per lo stato: ⚠️ avviso, ⛔ errore (le altre macchine hanno "active": nessuna icona)
+      function iconaStato(stato) {
+        if (stato === "avviso") return '<span class="icona-stato" title="Avviso">⚠️</span> ';
+        if (stato === "errore") return '<span class="icona-stato" title="Errore">⛔</span> ';
+        return "";
+      }
+
+      function aggiornaFiltroAutocomplete() {
+        const inputElement = document.getElementById("searchKey");
+        const inputVal = inputElement.value.trim();
+        const inputValLower = normalizza(inputVal);
+        const suggestionsContainer = document.getElementById("dtcSuggestions");
+        const resultContainer = document.getElementById("resultContainer");
+        const resultValue = document.getElementById("resultValue");
+        const resultLabel = document.getElementById("resultLabel");
+
+        suggestionsContainer.innerHTML = "";
+
+        if (inputVal === "") {
+          suggestionsContainer.style.display = "none";
+          resultContainer.style.display = "none";
+          return;
+        }
+
+        // Un solo suggerimento per codice, con il numero di ECU che lo usano
+        const visti = new Map();
+        for (const r of righeFiltrate()) {
+          if (!r.chiave.includes(inputValLower)) continue;
+          if (!visti.has(r.codice)) {
+            visti.set(r.codice, { primo: r, n: 0, macchine: new Set(), stati: new Set() });
+          }
+          const info = visti.get(r.codice);
+          info.n++;
+          info.macchine.add(r.macchina);
+          info.stati.add(r.stato);
+        }
+
+        const frammento = document.createDocumentFragment();
+        // Prima i codici che iniziano con il testo cercato, poi quelli che lo contengono
+        const codiciMostrati = [...visti.keys()]
+          .sort((a, b) => {
+            const pa = normalizza(a).startsWith(inputValLower) ? 0 : 1;
+            const pb = normalizza(b).startsWith(inputValLower) ? 0 : 1;
+            return pa - pb || a.localeCompare(b);
+          })
+          .slice(0, 40);
+        for (const codice of codiciMostrati) {
+          const info = visti.get(codice);
+          const li = document.createElement("li");
+          li.className = "autocomplete-suggestion";
+          li.innerHTML =
+            [...info.macchine].sort().map(badgeMacchina).join("") +
+            "<b>" + escapeHtml(codice) + "</b> " +
+            [...info.stati].sort().map(iconaStato).join("") +
+            "- " + messaggioItaliano(info.primo) +
+            (info.n > 1 ? " <small>(+" + (info.n - 1) + ")</small>" : "") +
+            messaggioOriginale(info.primo);
+          li.addEventListener("click", function () {
+            inputElement.value = codice;
+            suggestionsContainer.style.display = "none";
+            cercaDati();
+          });
+          frammento.appendChild(li);
+        }
+
+        if (visti.size === 0) {
+          suggestionsContainer.style.display = "none";
+          resultLabel.innerText = "Attenzione:";
+          resultValue.innerText = "Non è stato trovato nessun codice DTC che contiene " + inputVal;
+          resultContainer.classList.add("error");
+          resultContainer.style.display = "block";
+        } else {
+          if (resultContainer.classList.contains("error")) {
+            resultContainer.style.display = "none";
+          }
+          suggestionsContainer.appendChild(frammento);
+          suggestionsContainer.style.display = "block";
+        }
+      }
+
+      function cercaDati() {
+        const inputVal = normalizza(document.getElementById("searchKey").value);
+        const resultContainer = document.getElementById("resultContainer");
+        const resultValue = document.getElementById("resultValue");
+        const resultLabel = document.getElementById("resultLabel");
+
+        document.getElementById("dtcSuggestions").style.display = "none";
+        if (inputVal === "") return;
+
+        // 1) codice uguale, anche senza la lettera iniziale: "120" trova "T 120", "T179" trova anche "179"
+        const senzaPrefisso = (t) => t.replace(/^[a-z]+/, "");
+        let trovati = righeFiltrate().filter(
+          (r) => r.chiave === inputVal || senzaPrefisso(r.chiave) === senzaPrefisso(inputVal)
+        );
+        // 2) se non c'è un codice uguale, tutti i codici che contengono il testo cercato
+        if (trovati.length === 0) {
+          trovati = righeFiltrate().filter((r) => r.chiave.includes(inputVal));
+        }
+        const MAX_RISULTATI = 100;
+        const troppi = trovati.length > MAX_RISULTATI;
+        const totale = trovati.length;
+        trovati = trovati.slice(0, MAX_RISULTATI);
+
+        if (trovati.length === 0) {
+          resultLabel.innerText = "Attenzione:";
+          resultValue.innerText = "Nessun errore trovato.";
+          resultContainer.classList.add("error");
+          resultContainer.style.display = "block";
+          return;
+        }
+
+        resultLabel.innerText =
+          "Risultati: " + totale + (troppi ? " (mostrati i primi " + MAX_RISULTATI + ")" : "") +
+          " (Macchina ECU >>> DTC >>> Messaggio breve)";
+        resultValue.innerHTML = trovati
+          .map((r) =>
+            '<div class="result-row">' + badgeMacchina(r.macchina) +
+            "<b>" + escapeHtml(r.ecu) + "</b> &gt;&gt;&gt; " +
+            "<b>" + escapeHtml(r.codice) + "</b> " +
+            iconaStato(r.stato) +
+            "&gt;&gt;&gt; " + messaggioItaliano(r) + messaggioOriginale(r) + "</div>")
+          .join("");
+        resultContainer.classList.remove("error");
+        resultContainer.style.display = "block";
+      }
+
+      // Cambiando macchina si ripete la ricerca
+      document.getElementById("machineSelect").addEventListener("change", function () {
+        if (document.getElementById("searchKey").value.trim() !== "") cercaDati();
+      });
+
+      // Chiude i suggerimenti se l'utente clicca fuori dalla casella
+      document.addEventListener("click", function (e) {
+        if (e.target.id !== "searchKey") {
+          document.getElementById("dtcSuggestions").style.display = "none";
+        }
+      });
+
+      document.getElementById("searchKey").addEventListener("keypress", function (e) {
+        if (e.key === "Enter") cercaDati();
+      });
+
+      // ---------- Aggiungi alla schermata Home ----------
+      // Il service worker funziona solo se la pagina è aperta da un sito (http/https), non da file locale
+      if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
+        navigator.serviceWorker.register("sw.js").catch(() => {});
+      }
+
+      let promptInstallazione = null;
+      const giaInstallata =
+        window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+      if (giaInstallata) document.getElementById("installaBtn").style.display = "none";
+
+      // Android / Chrome / Edge: il browser fornisce la finestra di installazione
+      window.addEventListener("beforeinstallprompt", function (e) {
+        e.preventDefault();
+        promptInstallazione = e;
+      });
+      window.addEventListener("appinstalled", function () {
+        document.getElementById("installaBtn").style.display = "none";
+        document.getElementById("installaIstruzioni").style.display = "none";
+      });
+
+      function aggiungiAllaHome() {
+        if (promptInstallazione) {
+          promptInstallazione.prompt();
+          promptInstallazione = null;
+          return;
+        }
+        // Nessuna finestra automatica (iPhone, Firefox, ecc.): mostra le istruzioni
+        const ua = navigator.userAgent;
+        const box = document.getElementById("installaIstruzioni");
+        let testo;
+        const isIOS = /iPhone|iPad|iPod/i.test(ua) || (/Macintosh/.test(ua) && "ontouchend" in document);
+        if (isIOS && /CriOS|EdgiOS|FxiOS/i.test(ua)) {
+          // Chrome / Edge / Firefox su iPhone (iOS 16.4 o successivo)
+          testo =
+            "<b>iPhone / iPad (Chrome):</b><br>" +
+            "1. Tocca il pulsante <b>Condividi</b> (il quadrato con la freccia verso l'alto) " +
+            "nella barra degli indirizzi in alto a destra<br>" +
+            "2. Scorri l'elenco e scegli <b>Aggiungi alla schermata Home</b> " +
+            "(se non c'è, tocca <b>Modifica azioni…</b> in fondo e attivala)<br>" +
+            "3. Controlla il nome <b>Codici DTC</b> e tocca <b>Aggiungi</b><br>" +
+            "<small>Serve iOS 16.4 o più recente; altrimenti apri la pagina in Safari.</small>";
+        } else if (isIOS) {
+          testo =
+            "<b>iPhone / iPad (Safari):</b><br>" +
+            "1. Tocca il pulsante <b>Condividi</b> (il quadrato con la freccia verso l'alto)<br>" +
+            "2. Scorri e scegli <b>Aggiungi alla schermata Home</b><br>" +
+            "3. Tocca <b>Aggiungi</b>";
+        } else if (/Android/i.test(ua)) {
+          testo =
+            "<b>Android (Chrome):</b><br>" +
+            "1. Tocca il menu <b>⋮</b> in alto a destra<br>" +
+            "2. Scegli <b>Aggiungi a schermata Home</b> (o <b>Installa app</b>)<br>" +
+            "3. Conferma con <b>Aggiungi</b>";
+        } else {
+          testo =
+            "<b>Computer (Chrome / Edge):</b> clicca l'icona <b>Installa</b> nella barra degli indirizzi " +
+            "oppure il menu <b>⋮</b> → <b>Salva e condividi</b> → <b>Installa pagina come app</b>.";
+        }
+        box.innerHTML = testo;
+        box.style.display = "block";
+      }
+    </script>
+  </body>
+</html>

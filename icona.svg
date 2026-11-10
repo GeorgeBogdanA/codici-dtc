@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Sfondo -->
+  <rect width="512" height="512" rx="96" fill="#2c3e50"/>
+  <!-- Pavimento -->
+  <rect x="40" y="432" width="432" height="10" rx="5" fill="#46637f"/>
+  <!-- Montante -->
+  <rect x="112" y="96" width="22" height="300" rx="4" fill="#95a5a6"/>
+  <rect x="140" y="120" width="14" height="276" rx="4" fill="#7f8c8d"/>
+  <!-- Piastra porta-forche e forche -->
+  <rect x="84" y="300" width="30" height="96" rx="4" fill="#bdc3c7"/>
+  <rect x="44" y="384" width="80" height="16" rx="4" fill="#ecf0f1"/>
+  <!-- Tettuccio di protezione -->
+  <path d="M196 262 L218 148 L344 148 L362 262" fill="none" stroke="#ecf0f1" stroke-width="16" stroke-linejoin="round" stroke-linecap="round"/>
+  <rect x="206" y="134" width="152" height="20" rx="8" fill="#ecf0f1"/>
+  <!-- Volante e sedile -->
+  <path d="M232 262 L252 214" stroke="#2c3e50" stroke-width="10" stroke-linecap="round"/>
+  <rect x="290" y="206" width="40" height="56" rx="10" fill="#34495e"/>
+  <!-- Carrozzeria -->
+  <path d="M156 262 H400 Q440 262 448 300 L452 352 Q454 384 420 384 H156 Z" fill="#f5b301"/>
+  <!-- Contrappeso -->
+  <path d="M400 262 Q440 262 448 300 L452 352 Q454 384 420 384 H396 Z" fill="#d68910"/>
+  <!-- Ruote -->
+  <circle cx="206" cy="392" r="46" fill="#1c2833"/>
+  <circle cx="206" cy="392" r="18" fill="#95a5a6"/>
+  <circle cx="380" cy="398" r="38" fill="#1c2833"/>
+  <circle cx="380" cy="398" r="15" fill="#95a5a6"/>
+</svg>
